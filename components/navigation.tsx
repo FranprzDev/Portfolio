@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react"
 import Link from "next/link"
 import { gsap } from "gsap"
 
-export default function Navigation() {
+export default function Navigation({ mode = "fixed" }: { mode?: "fixed" | "absolute" }) {
   const navRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -18,7 +18,14 @@ export default function Navigation() {
   }, [])
 
   return (
-    <nav ref={navRef} className="absolute bottom-10 left-0 right-0 z-20">
+    <nav
+      ref={navRef}
+      className={
+        mode === "fixed"
+          ? "absolute bottom-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md shadow-2xl border-t border-gray-800"
+          : "absolute top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md shadow-2xl border-b border-gray-800"
+      }
+    >
       <ul className="flex flex-wrap justify-center gap-4 md:gap-8 text-sm font-medium px-4">
         <li>
           <Link href="#about" className="text-gray-400 hover:text-yellow-400 transition-colors relative group">

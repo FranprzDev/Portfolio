@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { CircuitBoard } from "lucide-react"
@@ -13,22 +13,39 @@ import ParticipationsSection from "@/components/participations-section"
 import ContactSection from "@/components/contact-section"
 import CustomCursor from "@/components/custom-cursor"
 import PageTransition from "@/components/page-transition"
+import { useTranslation } from 'next-i18next'
+import { useRouter } from "next/navigation"
 
 export default function Home() {
+  const { i18n } = useTranslation()
   const mainRef = useRef<HTMLDivElement>(null)
   const sectionsRef = useRef<(HTMLElement | null)[]>([])
+  const router = useRouter();
+  const [navMode, setNavMode] = useState<'fixed' | 'absolute'>("fixed");
+
+  useEffect(() => {
+    const userLang = navigator.language.split('-')[0];
+    if (userLang !== 'es' && userLang !== 'en') {
+      router.push(`/${userLang}`);
+    }
+  }, [router]);
+
+  useEffect(() => {
+    const userLang = navigator.language.split('-')[0]
+    if (userLang !== 'es' && userLang !== 'en') {
+      i18n.changeLanguage(userLang)
+    }
+  }, [i18n])
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger)
 
-    // Initialize page transitions
     const sections = sectionsRef.current.filter(Boolean) as HTMLElement[]
 
     if (sections.length > 0) {
       sections.forEach((section, index) => {
-        if (index === 0) return // Skip the first section (hero)
+        if (index === 0) return
 
-        // Create page turn effect
         gsap.set(section, {
           opacity: 0,
           y: 100,
@@ -67,6 +84,21 @@ export default function Home() {
     }
   }, [])
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const heroSection = sectionsRef.current[0];
+      if (!heroSection) return;
+      const rect = heroSection.getBoundingClientRect();
+      if (rect.bottom <= 0) {
+        setNavMode("absolute");
+      } else {
+        setNavMode("fixed");
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const addToSectionRefs = (el: HTMLElement | null) => {
     if (el && !sectionsRef.current.includes(el)) {
       sectionsRef.current.push(el)
@@ -75,35 +107,25 @@ export default function Home() {
 
   return (
     <main ref={mainRef} className="min-h-screen bg-black text-white relative overflow-hidden perspective">
-      {/* Custom cursor */}
       <CustomCursor />
 
-      {/* Background texture */}
-      <div className="fixed inset-0 opacity-10 pointer-events-none z-0">
-        <CircuitBoard className="absolute text-yellow-400 w-full h-full" />
-      </div>
+      <Navigation mode={navMode} />
 
-      {/* Animated background gradient */}
-      <div className="fixed inset-0 bg-gradient-to-b from-black via-gray-900 to-black opacity-40 z-0"></div>
+      <div className="fixed inset-0 bg-gradient-to-b from-black via-gray-900 to-black opacity-40 z-10"></div>
 
-      {/* Page transition overlay */}
       <PageTransition />
 
-      {/* Hero Section */}
       <section
         ref={addToSectionRefs}
         className="relative min-h-screen flex flex-col items-center justify-center px-4 z-10"
       >
         <Hero />
-        <Navigation />
       </section>
 
-      {/* About Section */}
       <section id="about" ref={addToSectionRefs} className="py-24 px-4 md:px-8 max-w-6xl mx-auto relative z-10">
         <AboutSection />
       </section>
-
-      {/* Experience Section */}
+    
       <section
         id="experience"
         ref={addToSectionRefs}
@@ -112,12 +134,10 @@ export default function Home() {
         <ExperienceSection />
       </section>
 
-      {/* Projects Section */}
       <section id="projects" ref={addToSectionRefs} className="py-24 px-4 md:px-8 max-w-6xl mx-auto relative z-10">
         <ProjectsSection />
       </section>
 
-      {/* Participations Section */}
       <section
         id="participations"
         ref={addToSectionRefs}
@@ -126,12 +146,10 @@ export default function Home() {
         <ParticipationsSection />
       </section>
 
-      {/* Contact Section */}
       <section id="contact" ref={addToSectionRefs} className="py-24 px-4 md:px-8 max-w-6xl mx-auto relative z-10">
         <ContactSection />
       </section>
 
-      {/* Footer */}
       <footer className="py-8 border-t border-gray-800 text-center text-gray-400 text-sm relative z-10">
         <div className="max-w-6xl mx-auto px-4">
           <p>© {new Date().getFullYear()} FranPrzDev. Todos los derechos reservados.</p>
