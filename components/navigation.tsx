@@ -1,417 +1,364 @@
 "use client"
 
-import type React from "react"
-
-import { useState, useEffect, useCallback, useRef } from "react"
+import { useState, useEffect, useCallback, useRef, useMemo } from "react"
 import Link from "next/link"
 import { gsap } from "gsap"
-import {
-  ChevronDown,
-  User,
-  Briefcase,
-  Trophy,
-  Mail,
-  BookOpen,
-  FileText,
-  Bookmark,
-  Rss,
-  Menu,
-  X,
-  GraduationCap,
-  Globe,
+import { 
+  ChevronDown, User, Briefcase, Trophy, Mail, 
+  BookOpen, FileText, Bookmark, Rss, Menu, X, GraduationCap 
 } from "lucide-react"
 
 interface MenuItem {
-  name: string
-  link: string
-  disabled?: boolean
-  icon?: React.ReactNode
+  name: string;
+  link: string;
+  disabled?: boolean;
+  icon?: React.ReactNode;
 }
 
 interface MenuSection {
-  title: string
-  items: MenuItem[]
-  icon: React.ReactNode
+  title: string;
+  items: MenuItem[];
+  icon: React.ReactNode;
 }
 
-export default function Navigation() {
-  const navRef = useRef<HTMLDivElement>(null)
-  const mobileNavRef = useRef<HTMLDivElement>(null)
-  const containerRef = useRef<HTMLDivElement>(null)
-  const dropdownRefs = useRef<{ [key: string]: HTMLDivElement | null }>({})
-
-  const [language, setLanguage] = useState<"en" | "es">("es")
-  const [isScrolled, setIsScrolled] = useState(false)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null)
-
-  const menuItems: Record<string, MenuSection> = {
-    portfolio: {
-      title: language === "en" ? "Portfolio" : "Portfolio",
-      icon: <Briefcase className="w-4 h-4" />,
-      items: [
-        {
-          name: language === "en" ? "Featured Participations" : "Participaciones Destacadas",
-          link: "#participations",
-          icon: <Trophy className="w-4 h-4" />,
-        },
-        {
-          name: language === "en" ? "Professional Experience" : "Experiencia Profesional",
-          link: "#experience",
-          icon: <Briefcase className="w-4 h-4" />,
-        },
-        {
-          name: language === "en" ? "Education" : "Educación",
-          link: "#studies",
-          icon: <GraduationCap className="w-4 h-4" />,
-        },
-        { name: language === "en" ? "About Me" : "Acerca de mí", link: "#about", icon: <User className="w-4 h-4" /> },
-        {
-          name: language === "en" ? "Projects" : "Mis Proyectos",
-          link: "#projects",
-          icon: <Briefcase className="w-4 h-4" />,
-        },
-        { name: language === "en" ? "Contact" : "Contacto", link: "#contact", icon: <Mail className="w-4 h-4" /> },
-      ],
-    },
-    facultad: {
-      title: language === "en" ? "Faculty" : "Facultad",
-      icon: <BookOpen className="w-4 h-4" />,
-      items: [
-        {
-          name: language === "en" ? "Faculty Files" : "Archivos de la Facultad",
-          link: "#faculty-files",
-          icon: <FileText className="w-4 h-4" />,
-        },
-        {
-          name: language === "en" ? "Study Subscriptions" : "Suscripciones por estudiar",
-          link: "#subscriptions",
-          icon: <Bookmark className="w-4 h-4" />,
-        },
-      ],
-    },
-    blog: {
-      title: "Blog",
-      icon: <Rss className="w-4 h-4" />,
-      items: [
-        {
-          name: language === "en" ? "Coming Soon" : "Próximamente",
-          link: "#",
-          disabled: true,
-          icon: <Rss className="w-4 h-4 opacity-50" />,
-        },
-      ],
-    },
+const menuItems: Record<string, MenuSection> = {
+  portfolio: {
+    title: "Portfolio",
+    icon: <Briefcase className="w-4 h-4" />,
+    items: [
+      { name: "Participaciones Destacadas", link: "#participations", icon: <Trophy className="w-4 h-4" /> },
+      { name: "Experiencia Profesional", link: "#experience", icon: <Briefcase className="w-4 h-4" /> },
+      { name: "Educación", link: "#studies", icon: <GraduationCap className="w-4 h-4" /> },
+      { name: "Acerca de mí", link: "#about", icon: <User className="w-4 h-4" /> },
+      { name: "Contacto", link: "#contact", icon: <Mail className="w-4 h-4" /> },
+    ]
+  },
+  facultad: {
+    title: "Facultad",
+    icon: <BookOpen className="w-4 h-4" />,
+    items: [
+      { name: "Archivos de la Facultad", link: "#faculty-files", icon: <FileText className="w-4 h-4" /> },
+      { name: "Suscripciones por estudiar", link: "#subscriptions", icon: <Bookmark className="w-4 h-4" /> },
+    ]
+  },
+  blog: {
+    title: "Blog",
+    icon: <Rss className="w-4 h-4" />,
+    items: [
+      { name: "Próximamente", link: "#", disabled: true, icon: <Rss className="w-4 h-4 opacity-50" /> },
+    ]
   }
+};
+
+export default function Navigation() {
+  const navRef = useRef<HTMLDivElement>(null);
+  const mobileNavRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const dropdownRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+  const isInitializedRef = useRef(false);
+  
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleScroll = useCallback(() => {
-    const scrolled = window.scrollY > 100
-    setIsScrolled(scrolled)
-
-    if (navRef.current && containerRef.current) {
+    const scrolled = window.scrollY > 50;
+    
+    if (navRef.current) {
       gsap.to(navRef.current, {
-        backgroundColor: scrolled ? "rgba(0, 0, 0, 0.95)" : "rgba(0, 0, 0, 0.8)",
-        backdropFilter: scrolled ? "blur(20px)" : "blur(10px)",
-        borderBottom: scrolled ? "1px solid rgba(251, 191, 36, 0.3)" : "1px solid transparent",
-        duration: 0.4,
-        ease: "power2.out",
-      })
-
-      gsap.to(containerRef.current, {
-        backgroundColor: scrolled ? "rgba(17, 24, 39, 0.98)" : "rgba(17, 24, 39, 0.9)",
-        borderColor: scrolled ? "rgba(251, 191, 36, 0.8)" : "rgba(75, 85, 99, 0.6)",
-        scale: scrolled ? 0.96 : 1,
-        y: scrolled ? 3 : 0,
-        boxShadow: scrolled
-          ? "0 25px 50px -12px rgba(251, 191, 36, 0.15), 0 0 0 1px rgba(251, 191, 36, 0.1)"
-          : "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+        backgroundColor: scrolled ? "rgba(0, 0, 0, 0.8)" : "transparent",
+        backdropFilter: scrolled ? "blur(20px)" : "blur(0px)",
+        borderColor: scrolled ? "rgba(251, 191, 36, 0.3)" : "transparent",
         duration: 0.5,
-        ease: "back.out(1.7)",
-      })
+        ease: "power2.out",
+      });
     }
-  }, [])
+
+    if (containerRef.current) {
+      gsap.to(containerRef.current, {
+        backgroundColor: scrolled ? "rgba(17, 24, 39, 0.9)" : "rgba(17, 24, 39, 0.8)",
+        borderColor: scrolled ? "rgba(251, 191, 36, 0.6)" : "rgba(75, 85, 99, 0.5)",
+        scale: scrolled ? 0.95 : 1,
+        y: scrolled ? 5 : 0,
+        duration: 0.6,
+        ease: "back.out(1.7)",
+      });
+    }
+  }, []);
 
   const handleSmoothScroll = useCallback((link: string) => {
-    if (link.startsWith("#")) {
-      const element = document.querySelector(link)
+    if (link.startsWith('#')) {
+      const element = document.querySelector(link);
       if (element) {
-        const navHeight = 100 // Account for fixed navbar
-        const elementPosition = element.getBoundingClientRect().top + window.pageYOffset - navHeight
-        window.scrollTo({
-          top: elementPosition,
-          behavior: "smooth",
-        })
+        element.scrollIntoView({ behavior: 'smooth' });
       }
     }
-  }, [])
+  }, []);
 
-  const handleDropdownToggle = useCallback(
-    (key: string) => {
-      if (openDropdown === key) {
-        setOpenDropdown(null)
-      } else {
-        setOpenDropdown(key)
+  const handleDropdownToggle = useCallback((key: string) => {
+    setActiveDropdown(currentActive => {
+      const newActive = currentActive === key ? null : key;
+      
+      Object.entries(dropdownRefs.current).forEach(([dropdownKey, dropdown]) => {
+        if (!dropdown) return;
+        
+        if (dropdownKey === key && newActive !== null) {
+          dropdown.style.display = 'block';
+          dropdown.style.zIndex = '210';
+          gsap.fromTo(dropdown, {
+            opacity: 0,
+            y: -20,
+            scale: 0.9,
+            rotationX: -15,
+          }, {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            rotationX: 0,
+            duration: 0.5,
+            ease: "back.out(1.7)",
+          });
+
+          const items = dropdown.querySelectorAll('.dropdown-item');
+          gsap.fromTo(items, {
+            opacity: 0,
+            x: -20,
+            rotationY: -15,
+          }, {
+            opacity: 1,
+            x: 0,
+            rotationY: 0,
+            duration: 0.4,
+            stagger: 0.1,
+            ease: "back.out(1.7)",
+            delay: 0.2,
+          });
+        } else {
+          gsap.to(dropdown, {
+            opacity: 0,
+            y: -20,
+            scale: 0.9,
+            rotationX: -15,
+            duration: 0.3,
+            ease: "power2.in",
+            onComplete: () => {
+              dropdown.style.display = 'none';
+            }
+          });
+        }
+      });
+      
+      return newActive;
+    });
+  }, []);
+
+  const handleMobileMenuToggle = useCallback(() => {
+    setIsMobileMenuOpen(currentOpen => {
+      const newOpen = !currentOpen;
+      
+      if (mobileNavRef.current) {
+        if (newOpen) {
+          gsap.fromTo(mobileNavRef.current, {
+            height: 0,
+            opacity: 0,
+          }, {
+            height: "auto",
+            opacity: 1,
+            duration: 0.6,
+            ease: "power3.out",
+          });
+        } else {
+          gsap.to(mobileNavRef.current, {
+            height: 0,
+            opacity: 0,
+            duration: 0.4,
+            ease: "power3.in",
+          });
+        }
       }
-    },
-    [openDropdown],
-  )
+      
+      return newOpen;
+    });
+  }, []);
 
-  const toggleLanguage = () => {
-    setLanguage(language === "en" ? "es" : "en")
-  }
-
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen)
-  }
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (openDropdown && !navRef.current?.contains(event.target as Node)) {
-        setOpenDropdown(null)
+  const handleClickOutside = useCallback((event: MouseEvent) => {
+    const target = event.target as Node;
+    const navElement = navRef.current;
+    
+    if (navElement && !navElement.contains(target)) {
+      const isClickOnDropdown = Object.values(dropdownRefs.current).some(
+        dropdown => dropdown && dropdown.contains(target)
+      );
+      
+      if (!isClickOnDropdown) {
+        setActiveDropdown(null);
       }
     }
+  }, []);
 
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [openDropdown])
+  const handleKeyDown = useCallback((event: KeyboardEvent) => {
+    if (event.key === 'Escape') {
+      setActiveDropdown(null);
+      setIsMobileMenuOpen(false);
+    }
+  }, []);
+
+  const handleItemClick = useCallback((item: MenuItem, event: React.MouseEvent) => {
+    if (item.disabled) {
+      event.preventDefault();
+      return;
+    }
+    
+    handleSmoothScroll(item.link);
+    setActiveDropdown(null);
+    setIsMobileMenuOpen(false);
+  }, [handleSmoothScroll]);
 
   useEffect(() => {
-    if (navRef.current) {
-      gsap.fromTo(
-        navRef.current,
-        {
-          y: -100,
-          opacity: 0,
-        },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 1.2,
-          ease: "back.out(1.7)",
-          delay: 0.5,
-        },
-      )
+    if (!isInitializedRef.current && navRef.current) {
+      isInitializedRef.current = true;
+      
+      gsap.fromTo(navRef.current, {
+        y: -100,
+        opacity: 0,
+      }, {
+        y: 0,
+        opacity: 1,
+        duration: 1.2,
+        ease: "back.out(1.7)",
+        delay: 0.5,
+      });
     }
-
-    window.addEventListener("scroll", handleScroll, { passive: true })
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [handleScroll])
+  }, []);
 
   useEffect(() => {
-    if (openDropdown && dropdownRefs.current[openDropdown]) {
-      const dropdown = dropdownRefs.current[openDropdown]
-      const items = dropdown.querySelectorAll(".dropdown-item")
+    const scrollHandler = handleScroll;
+    const clickHandler = handleClickOutside;
+    const keyHandler = handleKeyDown;
+    
+    window.addEventListener('scroll', scrollHandler, { passive: true });
+    document.addEventListener('click', clickHandler);
+    document.addEventListener('keydown', keyHandler);
+    
+    return () => {
+      window.removeEventListener('scroll', scrollHandler);
+      document.removeEventListener('click', clickHandler);
+      document.removeEventListener('keydown', keyHandler);
+    };
+  }, []);
 
-      gsap.fromTo(
-        dropdown,
-        {
-          opacity: 0,
-          y: -20,
-          scale: 0.9,
-          rotationX: -15,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          rotationX: 0,
-          duration: 0.5,
-          ease: "back.out(1.7)",
-        },
-      )
-
-      gsap.fromTo(
-        items,
-        {
-          opacity: 0,
-          x: -20,
-          rotationY: -15,
-        },
-        {
-          opacity: 1,
-          x: 0,
-          rotationY: 0,
-          duration: 0.4,
-          stagger: 0.1,
-          ease: "back.out(1.7)",
-          delay: 0.2,
-        },
-      )
-    }
-  }, [openDropdown])
-
-  useEffect(() => {
-    if (isMobileMenuOpen && mobileNavRef.current) {
-      gsap.fromTo(
-        mobileNavRef.current,
-        {
-          height: 0,
-          opacity: 0,
-        },
-        {
-          height: "auto",
-          opacity: 1,
-          duration: 0.6,
-          ease: "power3.out",
-        },
-      )
-    }
-  }, [isMobileMenuOpen])
+  const menuEntries = useMemo(() => Object.entries(menuItems), []);
 
   return (
-    <nav
-      ref={navRef}
-      className="fixed w-full top-0 z-[100] transition-all duration-300 bg-black/80 backdrop-blur-md border-b border-transparent"
-    >
-      {/* Blur overlay for sides when scrolled */}
-      {isScrolled && (
-        <div className="absolute inset-0 pointer-events-none z-0">
-          <div className="absolute left-0 top-0 bottom-0 w-40 bg-gradient-to-r from-black/90 via-black/60 to-transparent backdrop-blur-lg"></div>
-          <div className="absolute right-0 top-0 bottom-0 w-40 bg-gradient-to-l from-black/90 via-black/60 to-transparent backdrop-blur-lg"></div>
-        </div>
-      )}
-
-      {/* Desktop Navigation */}
-      <div className="hidden lg:block relative z-10">
-        <div className="max-w-5xl mx-auto px-6 py-4">
+    <>
+      <nav
+        ref={navRef}
+        className="fixed w-full top-0 left-0 right-0 z-[200] hidden lg:block"
+        style={{ position: 'fixed', top: 0, width: '100%' }}
+      >
+        <div className="max-w-4xl mx-auto px-6 py-4">
           <div
             ref={containerRef}
-            className={`backdrop-blur-md rounded-full px-8 py-3 border shadow-lg transition-all duration-300 ${
-              isScrolled
-                ? "bg-gray-900/98 border-yellow-400/80 shadow-yellow-400/25"
-                : "bg-gray-900/90 border-gray-600/60"
+            className="backdrop-blur-md rounded-full px-8 py-3 border border-gray-600/50 shadow-lg bg-gray-900/80 transition-all duration-300"
+          >
+            <div className="flex items-center justify-center space-x-2">
+              {menuEntries.map(([key, section]) => (
+                <div key={key} className="relative">
+                  <button
+                    onClick={() => handleDropdownToggle(key)}
+                    className="interactive flex items-center space-x-2 rounded-full px-4 py-2 text-white hover:text-yellow-400 hover:bg-yellow-400/10 transition-all duration-300 hover:scale-105"
+                    data-cursor-text={section.title}
+                  >
+                    {section.icon}
+                    <span className="text-sm font-medium">{section.title}</span>
+                    <ChevronDown 
+                      className={`w-4 h-4 transition-transform duration-300 ${
+                        activeDropdown === key ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </button>
+                  
+                  <div
+                    ref={(el) => { dropdownRefs.current[key] = el; }}
+                    className="absolute top-full left-0 mt-2 w-64 rounded-2xl shadow-2xl bg-gray-900/95 backdrop-blur-xl border border-gray-800/50 py-2"
+                    style={{ display: 'none', zIndex: 210 }}
+                  >
+                    {section.items.map((item, index) => (
+                      <Link
+                        key={index}
+                        href={item.link}
+                        onClick={(e) => handleItemClick(item, e)}
+                        className={`dropdown-item interactive flex items-center space-x-3 px-4 py-3 text-gray-300 hover:text-yellow-400 hover:bg-yellow-400/10 transition-all duration-300 ${
+                          item.disabled ? 'cursor-not-allowed opacity-50' : 'hover:scale-105'
+                        }`}
+                        data-cursor-text={item.name}
+                      >
+                        {item.icon}
+                        <span className="text-sm">{item.name}</span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <nav 
+        className="lg:hidden fixed w-full top-0 left-0 right-0 z-[200] bg-black/80 backdrop-blur-md border-b border-gray-800/50"
+        style={{ position: 'fixed', top: 0, width: '100%' }}
+      >
+        <div className="px-4 py-3">
+          <div className="flex items-center justify-between">
+            <Link 
+              href="/" 
+              className="text-xl font-bold text-yellow-400 interactive"
+              data-cursor-text="Francisco Perez"
+            >
+              Francisco Perez
+            </Link>
+            <button
+              onClick={handleMobileMenuToggle}
+              className="interactive text-white hover:text-yellow-400 transition-colors duration-300 p-2"
+              data-cursor-text={isMobileMenuOpen ? "Cerrar" : "Menú"}
+            >
+              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
+          
+          <div
+            ref={mobileNavRef}
+            className={`mt-4 rounded-2xl border border-gray-800/50 bg-gray-900/95 backdrop-blur-xl overflow-hidden ${
+              isMobileMenuOpen ? 'block' : 'hidden'
             }`}
           >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-6">
-                {Object.entries(menuItems).map(([key, section]) => (
-                  <div key={key} className="relative group">
-                    <button
-                      onClick={() => handleDropdownToggle(key)}
-                      className="flex items-center space-x-2 text-gray-300 hover:text-yellow-400 transition-colors duration-300 rounded-full px-4 py-2 hover:bg-yellow-400/10 interactive"
-                      data-cursor-text={section.title}
+            <div className="py-2">
+              {menuEntries.map(([key, section]) => (
+                <div key={key} className="border-b border-gray-800/30 last:border-b-0">
+                  <div className="px-4 py-3 flex items-center space-x-3 text-yellow-400 font-medium">
+                    {section.icon}
+                    <span>{section.title}</span>
+                  </div>
+                  {section.items.map((item, index) => (
+                    <Link
+                      key={index}
+                      href={item.link}
+                      onClick={(e) => handleItemClick(item, e)}
+                      className={`mobile-menu-item interactive flex items-center space-x-3 px-8 py-3 text-gray-300 hover:text-yellow-400 hover:bg-yellow-400/10 transition-all duration-300 ${
+                        item.disabled ? 'cursor-not-allowed opacity-50' : ''
+                      }`}
+                      data-cursor-text={item.name}
                     >
-                      {section.icon}
-                      <span className="font-medium">{section.title}</span>
-                      <ChevronDown
-                        className={`w-4 h-4 transition-transform duration-300 ${openDropdown === key ? "rotate-180" : ""}`}
-                      />
-                    </button>
-
-                    {openDropdown === key && (
-                      <div
-                        ref={(el) => (dropdownRefs.current[key] = el)}
-                        className="absolute top-full left-0 mt-2 w-64 rounded-2xl shadow-2xl bg-gray-900/98 backdrop-blur-xl border border-gray-700/60 overflow-hidden z-50"
-                      >
-                        <div className="p-2">
-                          {section.items.map((item, index) => (
-                            <Link
-                              key={index}
-                              href={item.link}
-                              onClick={(e) => {
-                                if (item.disabled) {
-                                  e.preventDefault()
-                                  return
-                                }
-                                handleSmoothScroll(item.link)
-                                setOpenDropdown(null)
-                              }}
-                              className={`dropdown-item flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-300 ${
-                                item.disabled
-                                  ? "text-gray-500 cursor-not-allowed"
-                                  : "text-gray-300 hover:text-yellow-400 hover:bg-yellow-400/10 interactive"
-                              }`}
-                              data-cursor-text={item.disabled ? "Próximamente" : item.name}
-                            >
-                              {item.icon}
-                              <span className="font-medium">{item.name}</span>
-                            </Link>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              <button
-                onClick={toggleLanguage}
-                className="flex items-center gap-2 text-gray-400 hover:text-yellow-400 transition-colors bg-gray-800/60 px-4 py-2 rounded-full interactive"
-                data-cursor-text="Cambiar idioma"
-              >
-                <Globe size={16} />
-                <span className="uppercase font-bold">{language}</span>
-              </button>
+                      {item.icon}
+                      <span className="text-sm">{item.name}</span>
+                    </Link>
+                  ))}
+                </div>
+              ))}
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Mobile Navigation */}
-      <div className="lg:hidden relative z-10">
-        <div className="px-4 py-4">
-          <div className="flex items-center justify-between bg-gray-900/95 backdrop-blur-md rounded-2xl px-6 py-4 border border-gray-800/60">
-            <div className="text-white font-bold text-lg">Francisco Perez</div>
-
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={toggleLanguage}
-                className="flex items-center gap-1 text-gray-400 hover:text-yellow-400 transition-colors"
-              >
-                <Globe size={16} />
-                <span className="uppercase font-bold text-sm">{language}</span>
-              </button>
-
-              <button onClick={toggleMobileMenu} className="text-gray-300 hover:text-yellow-400 transition-colors">
-                {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-              </button>
-            </div>
-          </div>
-
-          {isMobileMenuOpen && (
-            <div
-              ref={mobileNavRef}
-              className="mt-4 bg-gray-900/98 backdrop-blur-xl rounded-2xl border border-gray-800/60 overflow-hidden"
-            >
-              <div className="p-4 space-y-4">
-                {Object.entries(menuItems).map(([key, section]) => (
-                  <div key={key} className="space-y-2">
-                    <div className="flex items-center space-x-2 text-yellow-400 font-semibold px-2">
-                      {section.icon}
-                      <span>{section.title}</span>
-                    </div>
-                    <div className="space-y-1 pl-6">
-                      {section.items.map((item, index) => (
-                        <Link
-                          key={index}
-                          href={item.link}
-                          onClick={(e) => {
-                            if (item.disabled) {
-                              e.preventDefault()
-                              return
-                            }
-                            handleSmoothScroll(item.link)
-                            setIsMobileMenuOpen(false)
-                          }}
-                          className={`mobile-menu-item flex items-center space-x-3 px-3 py-2 rounded-lg transition-all duration-300 ${
-                            item.disabled
-                              ? "text-gray-500 cursor-not-allowed"
-                              : "text-gray-300 hover:text-yellow-400 hover:bg-yellow-400/10"
-                          }`}
-                        >
-                          {item.icon}
-                          <span>{item.name}</span>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </nav>
-  )
+      </nav>
+    </>
+  );
 }
