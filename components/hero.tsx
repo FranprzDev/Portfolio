@@ -10,6 +10,7 @@ export default function Hero() {
   const infoRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    // Initial animations
     const tl = gsap.timeline()
 
     tl.from(logoRef.current, {
@@ -53,13 +54,11 @@ export default function Hero() {
 
       <div ref={taglineRef}>
         <h2 className="text-xl md:text-3xl font-medium mb-8 text-gray-300">
-          <span className="text-yellow-400 font-bold">Ing.</span> en Sistemas de Información
-          <br />
-          <span className="text-yellow-400 font-bold">CRACK</span>
+          <span className="text-yellow-400 font-bold">FullStack</span> Web Developer
         </h2>
 
         <p className="max-w-md mx-auto text-gray-400 mb-12">
-          Desarrollo de soluciones web robustas y escalables con código limpio y optimizado
+          Creating robust and scalable web solutions with clean, optimized code
         </p>
       </div>
 
