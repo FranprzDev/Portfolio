@@ -114,11 +114,13 @@ export default function ExperienceSection() {
       </div>
 
       <div ref={timelineRef} className="space-y-12 relative">
+        {/* Timeline line */}
         <div className="timeline-line absolute left-4 top-0 bottom-0 w-0.5 bg-gray-800"></div>
 
         {experiences.map((exp, index) => (
           <div key={index} ref={(el) => addToRefs(el, index)} className="relative pl-12">
-            <div className="timeline-dot absolute w-4 h-4 bg-yellow-400 rounded-full left-4 top-2 -translate-x-1/2"></div>
+            {/* Timeline dot */}
+            <div className="timeline-dot absolute w-4 h-4 bg-yellow-400 rounded-full left-2.5 top-2 -translate-x-1/2"></div>
 
             <div className="mb-2">
               <h3 className="text-xl font-bold">{exp.title}</h3>
