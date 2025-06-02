@@ -20,6 +20,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+
   return (
     <html lang="es" className="scroll-smooth">
       <body className={`${spaceGrotesk.variable} font-sans`}>{children}</body>
