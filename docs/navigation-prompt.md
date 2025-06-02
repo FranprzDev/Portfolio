@@ -14,7 +14,7 @@ Crea un componente de navegación `Navigation.tsx` para Next.js 15 + TypeScript 
 
 ### 🎨 ESTRUCTURA DE DATOS
 
-```typescript
+\`\`\`typescript
 interface MenuItem {
   name: string;
   link: string;
@@ -56,12 +56,12 @@ const menuItems: Record<string, MenuSection> = {
     ]
   }
 };
-```
+\`\`\`
 
 ### 🎬 ANIMACIONES GSAP OBLIGATORIAS
 
 #### **1. Entrada inicial del nav:**
-```javascript
+\`\`\`javascript
 gsap.fromTo(navRef.current, {
   y: -100,
   opacity: 0,
@@ -72,10 +72,10 @@ gsap.fromTo(navRef.current, {
   ease: "back.out(1.7)",
   delay: 0.5,
 });
-```
+\`\`\`
 
 #### **2. Animaciones de scroll:**
-```javascript
+\`\`\`javascript
 const handleScroll = useCallback(() => {
   const scrolled = window.scrollY > 50;
   
@@ -96,10 +96,10 @@ const handleScroll = useCallback(() => {
     ease: "back.out(1.7)",
   });
 }, []);
-```
+\`\`\`
 
 #### **3. Dropdowns con efecto 3D:**
-```javascript
+\`\`\`javascript
 // Apertura
 gsap.fromTo(dropdown, {
   opacity: 0,
@@ -129,10 +129,10 @@ gsap.fromTo(items, {
   ease: "back.out(1.7)",
   delay: 0.2,
 });
-```
+\`\`\`
 
 #### **4. Mobile menu:**
-```javascript
+\`\`\`javascript
 gsap.fromTo(mobileNavRef.current, {
   height: 0,
   opacity: 0,
@@ -142,7 +142,7 @@ gsap.fromTo(mobileNavRef.current, {
   duration: 0.6,
   ease: "power3.out",
 });
-```
+\`\`\`
 
 ### 🎨 ESTILOS EXACTOS
 
@@ -168,12 +168,12 @@ gsap.fromTo(mobileNavRef.current, {
 
 ### 🎯 REFS OBLIGATORIOS
 
-```typescript
+\`\`\`typescript
 const navRef = useRef<HTMLDivElement>(null);
 const mobileNavRef = useRef<HTMLDivElement>(null);
 const containerRef = useRef<HTMLDivElement>(null);
 const dropdownRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
-```
+\`\`\`
 
 ### 📱 RESPONSIVE DESIGN
 
@@ -191,7 +191,7 @@ const dropdownRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
 ### 🚀 IMPORTS NECESARIOS
 
-```typescript
+\`\`\`typescript
 import { useState, useEffect, useCallback, useRef } from "react"
 import Link from "next/link"
 import { gsap } from "gsap"
@@ -199,7 +199,7 @@ import {
   ChevronDown, User, Briefcase, Trophy, Mail, 
   BookOpen, FileText, Bookmark, Rss, Menu, X, GraduationCap 
 } from "lucide-react"
-```
+\`\`\`
 
 ### ⚡ OPTIMIZACIONES
 
@@ -215,4 +215,4 @@ import {
 - **Hover effects**: `hover:scale-105`, `hover:rotate-12`
 - **Active states**: `scale-105` para elementos activos
 
-**RESULTADO ESPERADO**: Navegación fluida, animada y moderna que se adapta perfectamente al scroll, con dropdowns 3D y versión mobile completa. 
+**RESULTADO ESPERADO**: Navegación fluida, animada y moderna que se adapta perfectamente al scroll, con dropdowns 3D y versión mobile completa.

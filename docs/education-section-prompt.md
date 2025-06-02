@@ -14,7 +14,7 @@ Crea un componente `StudiesSection.tsx` para Next.js 15 + TypeScript que incluya
 
 ### 🎨 ESTRUCTURA DE DATOS OBLIGATORIA
 
-```typescript
+\`\`\`typescript
 interface Certification {
   title: string
   institution: string
@@ -70,12 +70,12 @@ const certifications: Certification[] = [
     status: 'in-progress'
   }
 ]
-```
+\`\`\`
 
 ### 🎬 ESTRUCTURA DEL COMPONENTE
 
 #### **1. Header de sección:**
-```jsx
+\`\`\`jsx
 <div className="text-center space-y-4">
   <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white">
     <span className="text-yellow-400">Educación</span>
@@ -85,7 +85,7 @@ const certifications: Certification[] = [
     Mi formación académica y certificaciones profesionales en el campo de la tecnología
   </p>
 </div>
-```
+\`\`\`
 
 #### **2. Card de estudios universitarios:**
 - **Layout**: `flex flex-col sm:flex-row gap-4 sm:gap-6`
@@ -94,7 +94,7 @@ const certifications: Certification[] = [
 - **Achievements**: Grid con bullets de `w-1.5 h-1.5 bg-yellow-400 rounded-full`
 
 #### **3. Grid de certificaciones:**
-```jsx
+\`\`\`jsx
 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
   {certifications.map((cert, index) => (
     <div
@@ -103,18 +103,18 @@ const certifications: Certification[] = [
       className="cert-card group bg-gray-800/30 backdrop-blur-sm rounded-xl border border-gray-700/50 p-4 sm:p-6 hover:border-yellow-400/30 cursor-pointer hover:shadow-lg hover:shadow-yellow-400/10 hover:-translate-y-1 transition-all duration-300 interactive"
       data-cursor-text={`Ver ${cert.title}`}
     >
-```
+\`\`\`
 
 ### 🎭 MODAL DE CERTIFICACIONES
 
 #### **Estructura del Modal:**
-```typescript
+\`\`\`typescript
 interface CertificationModalProps {
   isOpen: boolean
   onClose: () => void
   certification: Certification | null
 }
-```
+\`\`\`
 
 #### **Layout del Modal:**
 - **Contenedor**: `fixed inset-0 z-[9999] h-[95vh]` con fondo transparente
@@ -123,7 +123,7 @@ interface CertificationModalProps {
 - **Área de scroll**: `h-[calc(95vh-140px)] overflow-y-auto`
 
 #### **Gestión de imágenes:**
-```typescript
+\`\`\`typescript
 const getCertificateImage = useCallback(() => {
   if (!certification) return '/racoon_working.svg'
   
@@ -140,12 +140,12 @@ const getCertificateImage = useCallback(() => {
       return '/racoon_working.svg'
   }
 }, [certification])
-```
+\`\`\`
 
 ### 🎬 ANIMACIONES GSAP DEL MODAL
 
 #### **Apertura del modal:**
-```javascript
+\`\`\`javascript
 const tl = gsap.timeline()
 
 gsap.set(modalRef.current, { 
@@ -171,10 +171,10 @@ tl.to(modalRef.current, {
   duration: 0.8,
   ease: "back.out(1.7)",
 }, 0.2)
-```
+\`\`\`
 
 #### **Animación de imagen:**
-```javascript
+\`\`\`javascript
 gsap.fromTo(imageRef.current, {
   scale: 0.8,
   opacity: 0,
@@ -187,10 +187,10 @@ gsap.fromTo(imageRef.current, {
   ease: "back.out(1.7)",
   delay: 0.5,
 })
-```
+\`\`\`
 
 #### **Stagger de detalles:**
-```javascript
+\`\`\`javascript
 gsap.fromTo(detailElements, {
   x: 50,
   opacity: 0,
@@ -204,10 +204,10 @@ gsap.fromTo(detailElements, {
   ease: "back.out(1.7)",
   delay: 0.8,
 })
-```
+\`\`\`
 
 #### **Partículas flotantes:**
-```javascript
+\`\`\`javascript
 const particles = Array.from({ length: 20 }, (_, i) => {
   const particle = document.createElement('div')
   particle.className = 'absolute w-2 h-2 bg-yellow-400 rounded-full opacity-20'
@@ -230,7 +230,7 @@ const particles = Array.from({ length: 20 }, (_, i) => {
   
   return particle
 })
-```
+\`\`\`
 
 ### 🎨 ESTILOS ESPECÍFICOS
 
@@ -255,7 +255,7 @@ const particles = Array.from({ length: 20 }, (_, i) => {
 
 ### 🎯 HANDLERS OBLIGATORIOS
 
-```typescript
+\`\`\`typescript
 const handleCertificationClick = useCallback((certification: Certification) => {
   setSelectedCertification(certification)
   setIsModalOpen(true)
@@ -265,7 +265,7 @@ const handleCloseModal = useCallback(() => {
   setIsModalOpen(false)
   setTimeout(() => setSelectedCertification(null), 300)
 }, [])
-```
+\`\`\`
 
 ### 🎨 PALETA DE COLORES
 
@@ -283,7 +283,7 @@ const handleCloseModal = useCallback(() => {
 
 ### 🚀 IMPORTS NECESARIOS
 
-```typescript
+\`\`\`typescript
 import { useState, useCallback, useRef } from "react"
 import Image from "next/image"
 import { gsap } from "gsap"
@@ -291,7 +291,7 @@ import {
   GraduationCap, Calendar, MapPin, Award, 
   Eye, MousePointer, X, ExternalLink, BookOpen 
 } from "lucide-react"
-```
+\`\`\`
 
 ### 🎭 CLASES ESPECIALES
 
@@ -307,4 +307,4 @@ import {
 - **Memory cleanup**: Remover partículas en cleanup
 - **Error handling**: onError para imágenes
 
-**RESULTADO ESPERADO**: Sección completa de educación con grid interactivo de certificaciones y modal cinematográfico que muestra certificados reales o mapache trabajando. 
+**RESULTADO ESPERADO**: Sección completa de educación con grid interactivo de certificaciones y modal cinematográfico que muestra certificados reales o mapache trabajando.
