@@ -21,23 +21,21 @@ export default function Home() {
   const mainRef = useRef<HTMLDivElement>(null)
   const sectionsRef = useRef<(HTMLElement | null)[]>([])
   const router = useRouter();
-  const [navMode, setNavMode] = useState<'fixed' | 'absolute'>("fixed");
+  const isInitializedRef = useRef(false);
 
   useEffect(() => {
     const userLang = navigator.language.split('-')[0];
+    
     if (userLang !== 'es' && userLang !== 'en') {
+      i18n.changeLanguage(userLang);
       router.push(`/${userLang}`);
     }
-  }, [router]);
+  }, [router, i18n]);
 
   useEffect(() => {
-    const userLang = navigator.language.split('-')[0]
-    if (userLang !== 'es' && userLang !== 'en') {
-      i18n.changeLanguage(userLang)
-    }
-  }, [i18n])
-
-  useEffect(() => {
+    if (isInitializedRef.current) return;
+    isInitializedRef.current = true;
+    
     gsap.registerPlugin(ScrollTrigger)
 
     const sections = sectionsRef.current.filter(Boolean) as HTMLElement[]
@@ -84,21 +82,6 @@ export default function Home() {
     }
   }, [])
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const heroSection = sectionsRef.current[0];
-      if (!heroSection) return;
-      const rect = heroSection.getBoundingClientRect();
-      if (rect.bottom <= 0) {
-        setNavMode("absolute");
-      } else {
-        setNavMode("fixed");
-      }
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   const addToSectionRefs = (el: HTMLElement | null) => {
     if (el && !sectionsRef.current.includes(el)) {
       sectionsRef.current.push(el)
@@ -109,7 +92,7 @@ export default function Home() {
     <main ref={mainRef} className="min-h-screen bg-black text-white relative overflow-hidden perspective">
       <CustomCursor />
 
-      <Navigation mode={navMode} />
+      <Navigation />
 
       <div className="fixed inset-0 bg-gradient-to-b from-black via-gray-900 to-black opacity-40 z-10"></div>
 
