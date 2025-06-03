@@ -1,9 +1,9 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
+import { useToast } from "@/hooks/use-toast"
 
 export default function ContactForm() {
   const [formState, setFormState] = useState({
@@ -13,10 +13,7 @@ export default function ContactForm() {
   })
 
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitStatus, setSubmitStatus] = useState<{
-    success?: boolean
-    message?: string
-  } | null>(null)
+  const { toast } = useToast()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormState({
@@ -29,35 +26,54 @@ export default function ContactForm() {
     e.preventDefault()
     setIsSubmitting(true)
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...formState,
+          to: "franciscoperezdeveloper@gmail.com",
+        }),
+      })
 
-    setSubmitStatus({
-      success: true,
-      message: "¡Mensaje enviado con éxito! Me pondré en contacto contigo pronto.",
-    })
+      if (response.ok) {
+        toast({
+          title: "¡Mensaje enviado!",
+          description: "Tu mensaje ha sido enviado correctamente. Me pondré en contacto contigo pronto.",
+          duration: 5000,
+        })
 
-    setIsSubmitting(false)
+        // Reset form
+        setFormState({
+          name: "",
+          email: "",
+          message: "",
+        })
+      } else {
+        throw new Error("Error al enviar el mensaje")
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Hubo un problema al enviar tu mensaje. Por favor, intenta nuevamente.",
+        variant: "destructive",
+        duration: 5000,
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
-    <div className="bg-gray-900 p-6 rounded-lg">
-      <h3 className="text-xl font-bold mb-6">Envíame un mensaje</h3>
+    <div className="bg-gray-900/50 backdrop-blur-sm p-4 sm:p-6 rounded-lg sm:rounded-xl border border-gray-700/50">
+      <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 text-white">Envíame un mensaje</h3>
 
-      {submitStatus && (
-        <div
-          className={`mb-6 p-3 rounded-md ${
-            submitStatus.success ? "bg-green-900/30 text-green-400" : "bg-red-900/30 text-red-400"
-          }`}
-        >
-          {submitStatus.message}
-        </div>
-      )}
-
-      <form className="space-y-4" onSubmit={handleSubmit}>
+      <form className="space-y-4 sm:space-y-6" onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="name" className="block text-sm text-gray-400 mb-1">
-            Nombre
+          <label htmlFor="name" className="block text-sm text-gray-400 mb-2">
+            Nombre *
           </label>
           <input
             type="text"
@@ -65,13 +81,14 @@ export default function ContactForm() {
             value={formState.name}
             onChange={handleChange}
             required
-            className="w-full bg-gray-800 border border-gray-700 rounded-md px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
+            className="w-full bg-gray-800/50 border border-gray-700 rounded-md px-3 sm:px-4 py-2 sm:py-3 text-white text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all"
+            placeholder="Tu nombre completo"
           />
         </div>
 
         <div>
-          <label htmlFor="email" className="block text-sm text-gray-400 mb-1">
-            Email
+          <label htmlFor="email" className="block text-sm text-gray-400 mb-2">
+            Email *
           </label>
           <input
             type="email"
@@ -79,13 +96,14 @@ export default function ContactForm() {
             value={formState.email}
             onChange={handleChange}
             required
-            className="w-full bg-gray-800 border border-gray-700 rounded-md px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
+            className="w-full bg-gray-800/50 border border-gray-700 rounded-md px-3 sm:px-4 py-2 sm:py-3 text-white text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all"
+            placeholder="tu@email.com"
           />
         </div>
 
         <div>
-          <label htmlFor="message" className="block text-sm text-gray-400 mb-1">
-            Mensaje
+          <label htmlFor="message" className="block text-sm text-gray-400 mb-2">
+            Mensaje *
           </label>
           <textarea
             id="message"
@@ -93,16 +111,24 @@ export default function ContactForm() {
             value={formState.message}
             onChange={handleChange}
             required
-            className="w-full bg-gray-800 border border-gray-700 rounded-md px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
+            className="w-full bg-gray-800/50 border border-gray-700 rounded-md px-3 sm:px-4 py-2 sm:py-3 text-white text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all resize-none"
+            placeholder="Cuéntame sobre tu proyecto o consulta..."
           ></textarea>
         </div>
 
         <Button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-yellow-400 text-black font-medium py-2 rounded-md hover:bg-yellow-300 transition-colors disabled:opacity-70"
+          className="w-full bg-yellow-400 text-black font-medium py-2 sm:py-3 rounded-md hover:bg-yellow-300 transition-colors disabled:opacity-70 disabled:cursor-not-allowed text-sm sm:text-base"
         >
-          {isSubmitting ? "Enviando..." : "Enviar mensaje"}
+          {isSubmitting ? (
+            <div className="flex items-center justify-center space-x-2">
+              <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
+              <span>Enviando...</span>
+            </div>
+          ) : (
+            "Enviar mensaje"
+          )}
         </Button>
       </form>
     </div>

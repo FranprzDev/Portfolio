@@ -91,33 +91,36 @@ export default function ExperienceTimeline() {
   }
 
   return (
-    <div ref={containerRef} className="space-y-12 relative">
-      {/* Timeline line */}
-      <div className="timeline-line absolute left-4 top-0 bottom-0 w-0.5 bg-gray-800"></div>
+    <div ref={containerRef} className="space-y-8 sm:space-y-12 relative">
+      {/* Timeline line - Responsive positioning */}
+      <div className="timeline-line absolute left-3 sm:left-4 top-0 bottom-0 w-0.5 bg-gray-800"></div>
 
       {experiences.map((exp, index) => (
-        <div key={index} ref={(el) => addToRefs(el, index)} className="relative pl-12">
-          {/* Timeline dot */}
-          <div className="timeline-dot absolute w-4 h-4 bg-yellow-400 rounded-full left-2.5 top-2 -translate-x-1/2"></div>
+        <div key={index} ref={(el) => addToRefs(el, index)} className="relative pl-8 sm:pl-12">
+          {/* Timeline dot - Fixed positioning */}
+          <div className="timeline-dot absolute w-3 h-3 sm:w-4 sm:h-4 bg-yellow-400 rounded-full left-2 sm:left-2.5 top-1 sm:top-2 transform -translate-x-1/2"></div>
 
-          <div className="mb-2">
-            <h3 className="text-xl font-bold">{exp.title}</h3>
-            <div className="flex items-center gap-2 text-gray-400 text-sm">
+          <div className="mb-3 sm:mb-2">
+            <h3 className="text-lg sm:text-xl font-bold text-white">{exp.title}</h3>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 text-gray-400 text-sm">
               {exp.company && (
                 <>
-                  <span className="text-yellow-400">{exp.company}</span>
-                  <span>•</span>
+                  <span className="text-yellow-400 font-medium">{exp.company}</span>
+                  <span className="hidden sm:inline">•</span>
                 </>
               )}
               <span>{exp.period}</span>
             </div>
           </div>
 
-          <p className="text-gray-300 mb-4">{exp.description}</p>
+          <p className="text-gray-300 mb-4 text-sm sm:text-base leading-relaxed">{exp.description}</p>
 
           <div className="flex flex-wrap gap-2">
             {exp.technologies.map((tech) => (
-              <span key={tech} className="px-2 py-1 bg-gray-900 text-xs rounded-full text-gray-300">
+              <span
+                key={tech}
+                className="px-2 py-1 bg-gray-900 text-xs rounded-full text-gray-300 border border-gray-700"
+              >
                 {tech}
               </span>
             ))}

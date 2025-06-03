@@ -10,6 +10,11 @@ export default function CustomCursor() {
   useEffect(() => {
     if (!cursorRef.current || !cursorDotRef.current) return
 
+    // Only show cursor on large screens (lg and above)
+    const mediaQuery = window.matchMedia("(min-width: 1024px)")
+
+    if (!mediaQuery.matches) return
+
     const cursor = cursorRef.current
     const cursorDot = cursorDotRef.current
 
@@ -89,11 +94,11 @@ export default function CustomCursor() {
     <>
       <div
         ref={cursorRef}
-        className="fixed w-8 h-8 rounded-full border border-yellow-400 pointer-events-none opacity-30 z-50 -translate-x-1/2 -translate-y-1/2 hidden md:block"
+        className="fixed w-8 h-8 rounded-full border border-yellow-400 pointer-events-none opacity-30 z-50 -translate-x-1/2 -translate-y-1/2 hidden lg:block"
       ></div>
       <div
         ref={cursorDotRef}
-        className="fixed w-1 h-1 rounded-full bg-yellow-400 pointer-events-none z-50 -translate-x-1/2 -translate-y-1/2 hidden md:block"
+        className="fixed w-1 h-1 rounded-full bg-yellow-400 pointer-events-none z-50 -translate-x-1/2 -translate-y-1/2 hidden lg:block"
       ></div>
     </>
   )
