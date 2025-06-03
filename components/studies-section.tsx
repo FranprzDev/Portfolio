@@ -36,7 +36,7 @@ const studies = [
     degree: "Ingeniería en Sistemas de Información",
     institution: "Universidad Tecnológica Nacional",
     period: "2022 - En Curso",
-    location: "Cruz Alta, Tucumán, Argentina",
+    location: "Rivadavia 1050, San Miguel de Tucumán, Argentina",
     status: "En curso",
     description:
       "Estudiante de 4to año de Ingeniería en Sistemas de Información con enfoque en desarrollo de software, bases de datos y sistemas de información empresariales.",
@@ -385,153 +385,157 @@ export default function StudiesSection() {
   }, [])
 
   return (
-    <div className="space-y-8 sm:space-y-12 lg:space-y-16 text-left">
-      {/* Header - Left aligned */}
-      <div className="text-left space-y-3 sm:space-y-4">
-        <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-white">
-          <span className="text-yellow-400">Educación</span> y Certificaciones
-        </h2>
-        <div className="w-12 sm:w-16 lg:w-20 h-1 bg-yellow-400 rounded-full"></div>
-        <p className="text-gray-400 text-sm sm:text-base lg:text-lg max-w-2xl">
-          Mi formación académica y certificaciones profesionales en el campo de la tecnología
-        </p>
-      </div>
+    <section className="relative z-10 bg-black/50 backdrop-blur-sm">
+      <div className="space-y-8 sm:space-y-12 lg:space-y-16 text-left py-8 sm:py-12 lg:py-16">
+        {/* Header - Left aligned */}
+        <div className="text-left space-y-3 sm:space-y-4">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-white">
+            <span className="text-yellow-400">Educación</span> y Certificaciones
+          </h2>
+          <div className="w-12 sm:w-16 lg:w-20 h-1 bg-yellow-400 rounded-full"></div>
+          <p className="text-gray-400 text-sm sm:text-base lg:text-lg max-w-2xl">
+            Mi formación académica y certificaciones profesionales en el campo de la tecnología
+          </p>
+        </div>
 
-      {/* University Studies */}
-      <div className="space-y-6 sm:space-y-8">
-        <h3 className="text-xl sm:text-2xl font-bold text-white flex items-center space-x-2">
-          <GraduationCap className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400" />
-          <span>Estudios Universitarios</span>
-        </h3>
+        {/* University Studies */}
+        <div className="space-y-6 sm:space-y-8">
+          <h3 className="text-xl sm:text-2xl font-bold text-white flex items-center space-x-2">
+            <GraduationCap className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400" />
+            <span>Estudios Universitarios</span>
+          </h3>
 
-        {studies.map((study, index) => (
-          <div
-            key={index}
-            className="bg-gray-800/30 backdrop-blur-sm rounded-lg sm:rounded-xl border border-gray-700/50 p-4 sm:p-6 lg:p-8"
-          >
-            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
-              <div className="flex-shrink-0">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 bg-yellow-400/20 rounded-full flex items-center justify-center">
-                  <GraduationCap className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 text-yellow-400" />
-                </div>
-              </div>
-
-              <div className="flex-1 space-y-3 sm:space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                  <h4 className="text-lg sm:text-xl lg:text-2xl font-bold text-white">{study.degree}</h4>
-                  <span className="bg-blue-400/20 text-blue-400 border border-blue-400/30 px-3 py-1 rounded-full text-xs sm:text-sm font-medium w-fit">
-                    {study.status}
-                  </span>
-                </div>
-
-                <div className="space-y-2 text-gray-300 text-sm sm:text-base">
-                  <div className="flex items-center space-x-2">
-                    <BookOpen className="w-4 h-4 text-yellow-400 flex-shrink-0" />
-                    <span className="font-medium">{study.institution}</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Calendar className="w-4 h-4 text-yellow-400 flex-shrink-0" />
-                    <span>{study.period}</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <MapPin className="w-4 h-4 text-yellow-400 flex-shrink-0" />
-                    <span>{study.location}</span>
-                  </div>
-                </div>
-
-                <p className="text-gray-400 leading-relaxed text-sm sm:text-base">{study.description}</p>
-
-                <div className="space-y-3">
-                  <h5 className="text-base sm:text-lg font-semibold text-yellow-400">Logros Destacados</h5>
-                  <div className="grid gap-2">
-                    {study.achievements.map((achievement, idx) => (
-                      <div key={idx} className="flex items-start space-x-3">
-                        <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full mt-2 flex-shrink-0"></div>
-                        <span className="text-gray-300 text-sm sm:text-base">{achievement}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Certifications */}
-      <div className="space-y-6 sm:space-y-8">
-        <h3 className="text-xl sm:text-2xl font-bold text-white flex items-center space-x-2">
-          <Award className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400" />
-          <span>Certificaciones</span>
-        </h3>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-          {certifications.map((cert, index) => (
+          {studies.map((study, index) => (
             <div
               key={index}
-              onClick={() => handleCertificationClick(cert)}
-              className="cert-card group bg-gray-800/30 backdrop-blur-sm rounded-lg sm:rounded-xl border border-gray-700/50 p-4 sm:p-6 hover:border-yellow-400/30 cursor-pointer hover:shadow-lg hover:shadow-yellow-400/10 hover:-translate-y-1 transition-all duration-300 interactive"
-              data-cursor-text={`Ver ${cert.title}`}
+              className="bg-gray-800/30 backdrop-blur-sm rounded-lg sm:rounded-xl border border-gray-700/50 p-4 sm:p-6 lg:p-8"
             >
-              <div className="flex items-start justify-between mb-4">
-                <div className={`p-2 rounded-lg ${cert.status === "completed" ? "bg-green-400/20" : "bg-blue-400/20"}`}>
-                  {cert.status === "completed" ? (
-                    <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" />
-                  ) : (
-                    <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
-                  )}
+              <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
+                <div className="flex-shrink-0">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 bg-yellow-400/20 rounded-full flex items-center justify-center">
+                    <GraduationCap className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 text-yellow-400" />
+                  </div>
                 </div>
-                <Eye className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-yellow-400 transition-colors" />
-              </div>
 
-              <div className="space-y-3">
-                <h4 className="text-base sm:text-lg font-bold text-white group-hover:text-yellow-400 transition-colors">
-                  {cert.title}
-                </h4>
-                <p className="text-gray-400 text-xs sm:text-sm">{cert.institution}</p>
-                <p className="text-gray-500 text-xs sm:text-sm">{cert.period}</p>
-
-                <div className="flex flex-wrap gap-1">
-                  {cert.tech
-                    .split(", ")
-                    .slice(0, 3)
-                    .map((tech, idx) => (
-                      <span key={idx} className="px-2 py-1 bg-gray-700/50 text-gray-400 rounded text-xs">
-                        {tech}
-                      </span>
-                    ))}
-                  {cert.tech.split(", ").length > 3 && (
-                    <span className="px-2 py-1 bg-gray-700/50 text-gray-400 rounded text-xs">
-                      +{cert.tech.split(", ").length - 3}
+                <div className="flex-1 space-y-3 sm:space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                    <h4 className="text-lg sm:text-xl lg:text-2xl font-bold text-white">{study.degree}</h4>
+                    <span className="bg-blue-400/20 text-blue-400 border border-blue-400/30 px-3 py-1 rounded-full text-xs sm:text-sm font-medium w-fit">
+                      {study.status}
                     </span>
-                  )}
-                </div>
+                  </div>
 
-                <div
-                  className={`inline-flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium ${
-                    cert.status === "completed" ? "bg-green-400/20 text-green-400" : "bg-blue-400/20 text-blue-400"
-                  }`}
-                >
-                  {cert.status === "completed" ? (
-                    <>
-                      <CheckCircle className="w-3 h-3" />
-                      <span>Completado</span>
-                    </>
-                  ) : (
-                    <>
-                      <Clock className="w-3 h-3" />
-                      <span>En Progreso</span>
-                    </>
-                  )}
+                  <div className="space-y-2 text-gray-300 text-sm sm:text-base">
+                    <div className="flex items-center space-x-2">
+                      <BookOpen className="w-4 h-4 text-yellow-400 flex-shrink-0" />
+                      <span className="font-medium">{study.institution}</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Calendar className="w-4 h-4 text-yellow-400 flex-shrink-0" />
+                      <span>{study.period}</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <MapPin className="w-4 h-4 text-yellow-400 flex-shrink-0" />
+                      <span>{study.location}</span>
+                    </div>
+                  </div>
+
+                  <p className="text-gray-400 leading-relaxed text-sm sm:text-base">{study.description}</p>
+
+                  <div className="space-y-3">
+                    <h5 className="text-base sm:text-lg font-semibold text-yellow-400">Logros Destacados</h5>
+                    <div className="grid gap-2">
+                      {study.achievements.map((achievement, idx) => (
+                        <div key={idx} className="flex items-start space-x-3">
+                          <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full mt-2 flex-shrink-0"></div>
+                          <span className="text-gray-300 text-sm sm:text-base">{achievement}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           ))}
         </div>
-      </div>
 
-      {/* Modal */}
-      <CertificationModal isOpen={isModalOpen} onClose={handleCloseModal} certification={selectedCertification} />
-    </div>
+        {/* Certifications */}
+        <div className="space-y-6 sm:space-y-8">
+          <h3 className="text-xl sm:text-2xl font-bold text-white flex items-center space-x-2">
+            <Award className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400" />
+            <span>Certificaciones</span>
+          </h3>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+            {certifications.map((cert, index) => (
+              <div
+                key={index}
+                onClick={() => handleCertificationClick(cert)}
+                className="cert-card group bg-gray-800/30 backdrop-blur-sm rounded-lg sm:rounded-xl border border-gray-700/50 p-4 sm:p-6 hover:border-yellow-400/30 cursor-pointer hover:shadow-lg hover:shadow-yellow-400/10 hover:-translate-y-1 transition-all duration-300 interactive"
+                data-cursor-text={`Ver ${cert.title}`}
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div
+                    className={`p-2 rounded-lg ${cert.status === "completed" ? "bg-green-400/20" : "bg-blue-400/20"}`}
+                  >
+                    {cert.status === "completed" ? (
+                      <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" />
+                    ) : (
+                      <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
+                    )}
+                  </div>
+                  <Eye className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-yellow-400 transition-colors" />
+                </div>
+
+                <div className="space-y-3">
+                  <h4 className="text-base sm:text-lg font-bold text-white group-hover:text-yellow-400 transition-colors">
+                    {cert.title}
+                  </h4>
+                  <p className="text-gray-400 text-xs sm:text-sm">{cert.institution}</p>
+                  <p className="text-gray-500 text-xs sm:text-sm">{cert.period}</p>
+
+                  <div className="flex flex-wrap gap-1">
+                    {cert.tech
+                      .split(", ")
+                      .slice(0, 3)
+                      .map((tech, idx) => (
+                        <span key={idx} className="px-2 py-1 bg-gray-700/50 text-gray-400 rounded text-xs">
+                          {tech}
+                        </span>
+                      ))}
+                    {cert.tech.split(", ").length > 3 && (
+                      <span className="px-2 py-1 bg-gray-700/50 text-gray-400 rounded text-xs">
+                        +{cert.tech.split(", ").length - 3}
+                      </span>
+                    )}
+                  </div>
+
+                  <div
+                    className={`inline-flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium ${
+                      cert.status === "completed" ? "bg-green-400/20 text-green-400" : "bg-blue-400/20 text-blue-400"
+                    }`}
+                  >
+                    {cert.status === "completed" ? (
+                      <>
+                        <CheckCircle className="w-3 h-3" />
+                        <span>Completado</span>
+                      </>
+                    ) : (
+                      <>
+                        <Clock className="w-3 h-3" />
+                        <span>En Progreso</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Modal */}
+        <CertificationModal isOpen={isModalOpen} onClose={handleCloseModal} certification={selectedCertification} />
+      </div>
+    </section>
   )
 }
